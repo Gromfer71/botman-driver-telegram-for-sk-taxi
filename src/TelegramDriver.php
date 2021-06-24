@@ -354,7 +354,7 @@ class TelegramDriver extends HttpDriver
         $defaultAdditionalParameters = $this->config->get('default_additional_parameters', []);
         $parameters = array_merge_recursive([
             'chat_id' => $recipient,
-        ], $additionalParameters + $defaultAdditionalParameters);
+        ], collect($additionalParameters)->merge($defaultAdditionalParameters)->toArray());
 
         /*
          * If we send a Question with buttons, ignore
