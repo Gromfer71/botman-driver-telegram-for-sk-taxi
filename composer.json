@@ -1,5 +1,5 @@
 {
-    "name": "botman/driver-telegram-for-sk-taxi",
+    "name": "botman-sk/driver-telegram-for-sk-taxi",
     "license": "MIT",
     "description": "Telegram driver for sk-taxi",
     "keywords": [
