@@ -27,7 +27,6 @@ use App\Services\ButtonsFormatterService;
 
 class TelegramDriver extends HttpDriver
 {
-// test
     const DRIVER_NAME = 'Telegram';
     const API_URL = 'https://api.telegram.org/bot';
     const FILE_API_URL = 'https://api.telegram.org/file/bot';
@@ -210,6 +209,9 @@ class TelegramDriver extends HttpDriver
         $buttonsLang = array_flip($buttonsLang);
 
         $messageText = $message->getText();
+        if(!$messageText) {
+            $messageText = trans('messages.invalid message');
+        }
 
         if (array_key_exists( $messageText,$buttonsLang)) {
             $messageText = $buttonsLang[$messageText];
@@ -312,11 +314,13 @@ class TelegramDriver extends HttpDriver
             return
                 array_merge([
                     'text' => (string) $button['text'],
+                    'value' => $button['value'],
                     'callback_data' => (string) $button['value'],
                 ], $button['additional']);
 
         });
         $replies = ButtonsFormatterService::format($replies);
+
         return $replies->toArray();
     }
 
@@ -433,7 +437,7 @@ class TelegramDriver extends HttpDriver
         if ($this->config->get('throw_http_exceptions')) {
             return $this->postWithExceptionHandling($this->buildApiUrl($this->endpoint), [], $payload);
         }
-        return $this->http->post($this->buildApiUrl($this->endpoint), [], $payload);
+        return $this->http->post($this->buildApiUrl($this->endpoint), ['disable_web_page_preview' => true], $payload);
     }
 
     /**
