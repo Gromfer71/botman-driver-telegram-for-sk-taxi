@@ -2,6 +2,8 @@
 
 namespace BotMan\Drivers\Telegram;
 
+use Barryvdh\TranslationManager\Models\LangPackage;
+use Barryvdh\TranslationManager\Models\Translation;
 use BotMan\Drivers\Telegram\Exceptions\TelegramConnectionException;
 use Illuminate\Support\Collection;
 use BotMan\BotMan\Drivers\HttpDriver;
@@ -13,6 +15,7 @@ use BotMan\BotMan\Messages\Attachments\Image;
 use BotMan\BotMan\Messages\Attachments\Video;
 use BotMan\BotMan\Messages\Attachments\Contact;
 use BotMan\BotMan\Messages\Outgoing\Question;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Request;
 use BotMan\BotMan\Drivers\Events\GenericEvent;
 use Symfony\Component\HttpFoundation\Response;
@@ -205,9 +208,8 @@ class TelegramDriver extends HttpDriver
                 ->setMessage($message)
                 ->setValue($callback->get('data'));
         }
-        $buttonsLang = require resource_path('lang/ru/buttons.php');
-        $buttonsLang = array_flip($buttonsLang);
 
+        $buttonsLang = Translation::where('group', 'buttons')->select('key', 'value')->pluck('key', 'value')->toArray();
         $messageText = $message->getText();
         if(!$messageText) {
             $messageText = trans('messages.invalid message');
