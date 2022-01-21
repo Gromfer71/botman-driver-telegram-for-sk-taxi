@@ -26,6 +26,7 @@ use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use BotMan\Drivers\Telegram\Exceptions\TelegramException;
 use Illuminate\Support\Facades\Log;
 use App\Services\ButtonsFormatterService;
+use Illuminate\Support\Facades\Log;
 
 
 class TelegramDriver extends HttpDriver
@@ -467,7 +468,11 @@ class TelegramDriver extends HttpDriver
         if ($this->config->get('throw_http_exceptions')) {
             return $this->postWithExceptionHandling($this->buildApiUrl($endpoint), [], $parameters);
         }
-        return $this->http->post($this->buildApiUrl($endpoint), [], $parameters);
+        $time = microtime(true);
+        $result =  $this->http->post($this->buildApiUrl($endpoint), [], $parameters);
+        Log::info(microtime(true) - $time);
+
+        return $result;
     }
 
     /**
