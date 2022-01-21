@@ -26,7 +26,6 @@ use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use BotMan\Drivers\Telegram\Exceptions\TelegramException;
 use Illuminate\Support\Facades\Log;
 use App\Services\ButtonsFormatterService;
-use Illuminate\Support\Facades\Log;
 
 
 class TelegramDriver extends HttpDriver
