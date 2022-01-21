@@ -24,7 +24,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use BotMan\Drivers\Telegram\Exceptions\TelegramException;
-use Illuminate\Support\Facades\Log;
 use App\Services\ButtonsFormatterService;
 
 
@@ -467,9 +466,9 @@ class TelegramDriver extends HttpDriver
         if ($this->config->get('throw_http_exceptions')) {
             return $this->postWithExceptionHandling($this->buildApiUrl($endpoint), [], $parameters);
         }
-        $time = microtime(true);
+
         $result =  $this->http->post($this->buildApiUrl($endpoint), [], $parameters);
-        Log::info(microtime(true) - $time);
+
 
         return $result;
     }
