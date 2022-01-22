@@ -474,7 +474,7 @@ class TelegramDriver extends HttpDriver
 
         $time = microtime(true);
         $result =  $this->http->post($this->buildApiUrl($endpoint), [], $parameters);
-        Log::debug(microtime(true) - $time);
+        Log::debug(microtime(true) - $time . ' ' . $endpoint);
 
 
         return $result;
