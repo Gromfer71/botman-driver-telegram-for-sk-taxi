@@ -215,10 +215,9 @@ class TelegramDriver extends HttpDriver
             $messageText = trans('messages.invalid message');
         }
 
-        if($messageText == '%%%_FILE_%%%' || $messageText == '%%%_IMAGE_%%%' || $messageText == '%%%_PHOTO_%%%' ||
-            $messageText == '%%%_AUDIO_%%%' || $messageText == '%%%_VIDEO_%%%') {
+	if($messageText == '%%%_FILE_%%%' || $messageText == '%%%_IMAGE_%%%' || $messageText == '%%%_PHOTO_%%%' || $messageText == '%%%_AUDIO_%%%' || $messageText == '%%%_VIDEO_%%%') {
             die();
-        }
+	}
 
         if (array_key_exists( $messageText,$buttonsLang)) {
             $messageText = $buttonsLang[$messageText];
@@ -313,17 +312,17 @@ class TelegramDriver extends HttpDriver
      */
     private function convertQuestion(Question $question)
     {
-       $collection = Collection::make($question->getButtons());
-       $collectionCount = $collection->count();
+        $collection = Collection::make($question->getButtons());
+        $collectionCount = $collection->count();
 
 
         $replies = $collection->map(function ($button) {
             return
                 array_merge([
-                    'text' => (string) $button['text'],
-                    'value' => $button['value'],
-                    'callback_data' => (string) $button['value'],
-                ], $button['additional']);
+                                'text' => (string) $button['text'],
+                                'value' => $button['value'],
+                                'callback_data' => (string) $button['value'],
+                            ], $button['additional']);
 
         });
         $replies = ButtonsFormatterService::format($replies);
@@ -364,8 +363,8 @@ class TelegramDriver extends HttpDriver
         $recipient = $matchingMessage->getRecipient() === '' ? $matchingMessage->getSender() : $matchingMessage->getRecipient();
         $defaultAdditionalParameters = $this->config->get('default_additional_parameters', []);
         $parameters = array_merge_recursive([
-            'chat_id' => $recipient,
-        ], collect($additionalParameters)->merge($defaultAdditionalParameters)->toArray());
+                                                'chat_id' => $recipient,
+                                            ], collect($additionalParameters)->merge($defaultAdditionalParameters)->toArray());
 
         /*
          * If we send a Question with buttons, ignore
@@ -373,16 +372,16 @@ class TelegramDriver extends HttpDriver
          */
 
         if ($message instanceof Question) {
-	        if(isset($additionalParameters['reply_markup'])) {
-		        $parameters['reply_markup'] = $additionalParameters['reply_markup'];
-	        } else {
-		        $parameters['reply_markup'] = json_encode([
-			        'keyboard' => $this->convertQuestion($message),
-                    'resize_keyboard' => true,
-		        ], true);
-	        }
+            if(isset($additionalParameters['reply_markup'])) {
+                $parameters['reply_markup'] = $additionalParameters['reply_markup'];
+            } else {
+                $parameters['reply_markup'] = json_encode([
+                                                              'keyboard' => $this->convertQuestion($message),
+                                                              'resize_keyboard' => true,
+                                                          ], true);
+            }
             $parameters['text'] = $message->getText();
-          
+
         } elseif ($message instanceof OutgoingMessage) {
             if ($message->getAttachment() !== null) {
                 $attachment = $message->getAttachment();
@@ -446,6 +445,7 @@ class TelegramDriver extends HttpDriver
         }
         $time = microtime(true);
         $result =  $this->http->post($this->buildApiUrl($this->endpoint), ['disable_web_page_preview' => true], $payload);
+        
 
         return $result;
     }
@@ -469,14 +469,19 @@ class TelegramDriver extends HttpDriver
     public function sendRequest($endpoint, array $parameters, IncomingMessage $matchingMessage)
     {
         $parameters = array_replace_recursive([
-            'chat_id' => $matchingMessage->getRecipient(),
-        ], $parameters);
+                                                  'chat_id' => $matchingMessage->getRecipient(),
+                                              ], $parameters);
 
         if ($this->config->get('throw_http_exceptions')) {
             return $this->postWithExceptionHandling($this->buildApiUrl($endpoint), [], $parameters);
         }
 
-        return $this->http->post($this->buildApiUrl($endpoint), [], $parameters);
+        $time = microtime(true);
+        $result =  $this->http->post($this->buildApiUrl($endpoint), [], $parameters);
+        
+
+
+        return $result;
     }
 
     /**
